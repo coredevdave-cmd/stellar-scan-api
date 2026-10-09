@@ -46,4 +46,13 @@ await app.register(mercurius, {
   graphiql: true,
 });
 
+const shutdown = async (signal: string) => {
+  log.info({ signal }, 'shutting down stellar-scan-api');
+  await app.close();
+  await pool.end();
+};
+
+process.once('SIGINT', () => void shutdown('SIGINT'));
+process.once('SIGTERM', () => void shutdown('SIGTERM'));
+
 await app.listen({ port: cfg.PORT, host: '0.0.0.0' });
